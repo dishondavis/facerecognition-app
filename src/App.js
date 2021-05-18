@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import FaceRecognition from "./components/FaceRecognition/faceRecognition";
 import Navigation from "./components/Navigation/navigation";
 import SignIn from "./components/SignIn/signIn";
+import Register from "./components/Register/register";
 import Logo from "./components/Logo/logo.js";
 import ImageLinkForm from "./components/ImageLinkForm/imageLinkForm.js";
 import Rank from "./components/Rank/rank.js";
@@ -42,8 +43,9 @@ class App extends Component {
       input: '',
       imageURL: '',
       box: {},
-      route:'signin'
-    }
+      route:'signin',
+      isSignedIn: false
+        }
   }
 
   calculateFaceLocation = (data) => {
@@ -80,6 +82,11 @@ class App extends Component {
   }
 
   onRouteChange = (route) => {
+    if (route === 'signout') {
+      this.setState({isSignedIn: false})
+    } else if (route === 'home') {
+      this.setState({isSignedIn: true})
+    }
     this.setState({route: route})
   }
 
@@ -89,20 +96,24 @@ class App extends Component {
              <Particles className="particles"
                 params={particlesOptions}
               />
-        <Navigation onRouteChange={this.onRouteChange} />
-        { this.state.route === 'signin' 
-        ? <SignIn onRouteChange={this.onRouteChange} />
-        : <div> 
+        <Navigation isSignedIn={this.state.isSignedIn} onRouteChange={this.onRouteChange} />
+        { this.state.route === 'home' 
+        ? <div> 
         <Logo />
        <Rank />
        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
        <FaceRecognition box={this.state.box} imageURL={this.state.imageURL} />
-       </div>
-        }
+       </div> 
+        : (
+          this.state.route === 'signin' 
+          ? <SignIn onRouteChange={this.onRouteChange} />
+          : <Register onRouteChange={this.onRouteChange} />
+        )
+      }
       </div>
     );
   }
-  }
+}
   
 
 export default App;
